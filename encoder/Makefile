@@ -1,4 +1,4 @@
-VFILES = encoder.v pll.v
+VFILES = encoder.v pll.v quadrature_decode.v
 
 FREQ_MHZ = 100
 
