@@ -9,55 +9,60 @@ module top (
 	    input  ENC_B_raw
 	    );
 
-   wire 	   sysclk;
+   wire 	   clk;
    wire 	   locked;
    
-   pll pll_inst (.clock_in(OSCI), .clock_out(sysclk), .locked(locked));
+   pll pll_inst (.clock_in(OSCI), .clock_out(clk), .locked(locked));
 
    localparam SYS_CNTR_WIDTH = 24;
    reg [SYS_CNTR_WIDTH-1:0] syscounter;
 
    reg [7:0] 		    position;
-   reg 			    last_a;
-   reg 			    last_b;
+   reg [1:0] 		    ENC_last;
    
-   reg 			    ENC_A;
-   reg 			    ENC_B;
+   reg [2:0] 		    ENC_A_sync, ENC_B_sync;
 
-   always @(posedge sysclk) begin
+   always @(posedge clk) ENC_A_sync <= {ENC_A_sync[1:0], ENC_A_raw};
+   always @(posedge clk) ENC_B_sync <= {ENC_B_sync[1:0], ENC_B_raw};
+
+   wire [1:0] ENC_next = {ENC_A_sync[2], ENC_B_sync[2]};
+   
+   always @(posedge clk) begin
      syscounter <= syscounter + 1;
 
-      ENC_A <= ENC_A_raw;
-      ENC_B <= ENC_B_raw;
+      case (ENC_last)
+	2'b00: 
+	  begin
+	     if (ENC_next[0] == 1)
+	       position <= position + 1;
+	     else if (ENC_next[1] == 1)
+	       position <= position - 1;
+	  end
+	2'b01:
+	  begin
+	     if (ENC_next[1] == 1)
+	       position <= position + 1;
+	     else if (ENC_next[0] == 0)
+	       position <= position - 1;
+	  end 
+	2'b11:
+	  begin
+	     if (ENC_next[0] == 0)
+		position <= position + 1;
+	     else if (ENC_next[1] == 0)
+		position <= position - 1;
+	  end 
+	2'b10:
+	  begin
+	     if (ENC_next[1] == 0)
+		position <= position + 1;
+	     else if (ENC_next[0] == 1)
+		position <= position - 1;
+	  end
+      endcase
 
-      if (last_a == 0 && last_b == 0) begin
-	 if (ENC_B == 1) begin
-	    position <= position + 1;
-	 end else if (ENC_A == 1) begin
-	    position <= position - 1;
-	 end
-      end else if (last_a == 0 && last_b == 1) begin
-	 if (ENC_A == 1) begin
-	    position <= position + 1;
-	 end else if (ENC_B == 0) begin
-	    position <= position - 1;
-	 end 
-      end else if (last_a == 1 && last_b == 1) begin
-	 if (ENC_B == 0) begin
-	    position <= position + 1;
-	 end else if (ENC_A == 0) begin
-	    position <= position - 1;
-	 end
-      end else if (last_a == 1 && last_b == 0) begin
-	 if (ENC_A == 0) begin
-	    position <= position + 1;
-	 end else if (ENC_B == 1) begin
-	    position <= position - 1;
-	 end
-      end
-	    
-      last_a <= ENC_A;
-      last_b <= ENC_B;
+      ENC_last <= ENC_next;
+      
    end
 
    assign LED5 = syscounter[SYS_CNTR_WIDTH-1];
