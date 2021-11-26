@@ -41,7 +41,7 @@ module top (
    reg [7:0] 		    last_cmd;
 
    always @(posedge clk) begin
-     response <= 8'ha7;
+     response <= 8'ha8;
    
      if (spi_cmd_valid) begin
 	last_cmd <= spi_cmd;

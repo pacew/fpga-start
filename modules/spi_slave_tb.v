@@ -57,6 +57,30 @@ module test;
       `ASSERT(! cmd_valid, "cmd should be only be valid for one cycle");
 
       SSEL = 0; SCK = 0; MOSI = 0; #10;
+      SSEL = 0; SCK = 1; MOSI = 0; #10;
+      SSEL = 0; SCK = 0; MOSI = 0; #10;
+      SSEL = 0; SCK = 1; MOSI = 0; #10;
+      SSEL = 0; SCK = 0; MOSI = 0; #10;
+      SSEL = 0; SCK = 1; MOSI = 0; #10;
+      SSEL = 0; SCK = 0; MOSI = 0; #10;
+      SSEL = 0; SCK = 1; MOSI = 0; #10;
+      SSEL = 0; SCK = 0; MOSI = 0; #10;
+      SSEL = 0; SCK = 1; MOSI = 0; #10;
+      SSEL = 0; SCK = 0; MOSI = 0; #10;
+      SSEL = 0; SCK = 1; MOSI = 0; #10;
+      SSEL = 0; SCK = 0; MOSI = 0; #10;
+      SSEL = 0; SCK = 1; MOSI = 0; #10;
+      SSEL = 0; SCK = 0; MOSI = 0; #10;
+      SSEL = 0; SCK = 1; MOSI = 0; #10;
+
+
+
+
+      SSEL = 1; SCK = 0; MOSI = 0; #10;
+      SSEL = 0; SCK = 0; MOSI = 0; #10;
+      
+
+      SSEL = 0; SCK = 0; MOSI = 0; #10;
       SSEL = 0; SCK = 1; MOSI = 0; #10; // bit 7
       SSEL = 0; SCK = 0; MOSI = 0; #10;
       SSEL = 0; SCK = 1; MOSI = 0; #10; // bit 6

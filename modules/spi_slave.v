@@ -29,14 +29,18 @@ module spi_slave
    reg [2:0] 	bitcnt;
    reg [7:0] 	rbuf = 0;
    reg [7:0] 	xbuf = 0;
+   
+
+   reg 		doing_cmd = 0;
+   
 
    always @(posedge clk) begin
       cmd_valid <= 0;
 
       if (~SSEL_active) begin
 	 bitcnt <= 0;
-	 xbuf <= response;
-      end else begin
+	 doing_cmd <= 1;
+      end else if (doing_cmd) begin
 	 if (SCK_risingedge) begin
 	    bitcnt <= bitcnt + 1;
 	    rbuf <= (rbuf << 1) | MOSI_data;
@@ -44,15 +48,20 @@ module spi_slave
 	    if (bitcnt == 7) begin
 	       cmd <= (rbuf << 1) | MOSI_data;
 	       cmd_valid <= 1;
+	       doing_cmd <= 0;
+	       xbuf <= response;
+	       
+	       
 	    end
-
+	 end
+      end else begin
+	 if (SCK_risingedge) begin
 	    xbuf <= xbuf << 1;
-	    
-	    
 	 end
       end
 
       MISO <= xbuf & 8'h80 ? 1 : 0;
    end
+   
 
 endmodule

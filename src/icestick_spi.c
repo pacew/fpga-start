@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <memory.h>
 
 #include <ftdi.h>
 
@@ -112,7 +113,8 @@ int
 main(int argc, char **argv)
 {
 	int c;
-	uint8_t val;
+	uint8_t xbuf[100];
+	int val;
 
 	while ((c = getopt (argc, argv, "")) != EOF) {
 		switch (c) {
@@ -129,14 +131,18 @@ main(int argc, char **argv)
 
 	icestick_spi_init ();
 
-	if (0) {
-		send_spi (&val, 1);
-	} else {
-		uint8_t rbuf[100];
-		rbuf[0] = 0x55;
-		spi_xfer (&val, rbuf, 1);
-		printf ("%x\n", rbuf[0]);
-	}
+	uint8_t rbuf[100];
+
+	memset (xbuf, 0, sizeof xbuf);
+	memset (rbuf, 0, sizeof rbuf);
+
+	xbuf[0] = val;
+
+	rbuf[0] = 0x12;
+	rbuf[1] = 0x34;
+
+	spi_xfer (xbuf, rbuf, 2);
+	printf ("%02x %02x\n", rbuf[0], rbuf[1]);
 
 	return 0;
 }
