@@ -1,13 +1,14 @@
-VFILES = encoder.v pll.v quadrature_decode.v
+VLIBDIR=../lib
+
+VFILES = qdecode.v pll.v \
+	$(VLIBDIR)/quadrature_decode.v
 
 FREQ_MHZ = 100
 
 all: design.bin
 
-test: quadrature_decode.vcd
-
-pll.v: mkclock.py
-	python mkclock.py $(FREQ_MHZ)
+pll.v: $(VLIBDIR)/mkclock.py
+	python $(VLIBDIR)/mkclock.py $(FREQ_MHZ)
 
 design.bin: $(VFILES) pins.pcf
 	yosys -DICE_STICK -q -p "synth_ice40 -json TMP.json" $(VFILES)
@@ -20,11 +21,6 @@ design.bin: $(VFILES) pins.pcf
 
 upload: design.bin
 	iceprog design.bin
-
-# view vcd files with gtkwave
-quadrature_decode.vcd: quadrature_decode_tb.v quadrature_decode.v
-	iverilog -s test -o TMP.tb quadrature_decode_tb.v
-	./TMP.tb
 
 clean:
 	rm -f *~ TMP.*

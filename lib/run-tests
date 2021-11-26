@@ -1,0 +1,21 @@
+#! /bin/bash
+
+MODULES=quadrature_decode
+
+for mod in $MODULES
+do
+    echo "testing: ${mod}"
+    iverilog -s test -o TMP.tb ${mod}_tb.v
+    if [ $? != 0 ]
+    then
+	echo "can't synthesize test ${mod}"
+	exit 1
+    fi
+    ./TMP.tb
+    if [ $? != 0 ]
+    then
+	echo "error running test ${mod}"
+	exit 1
+    fi
+done
+

@@ -22,7 +22,7 @@ module test;
    defparam uut.width = width;
 
   initial begin
-     $dumpfile("sim.vcd");
+     $dumpfile("TMP.vcd");
      $dumpvars;
      
      A = 0; B = 0;
