@@ -1,3 +1,5 @@
 ?
 *~
 TMP.*
+*.o
+icestick_spi

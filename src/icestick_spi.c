@@ -21,8 +21,28 @@ send_spi (uint8_t *data, int n)
 	send_byte (n-1);
 	send_byte ((n-1) >> 8);
 
-	if (ftdi_write_data(&ftdic, data, n) != n) {
+	if (ftdi_write_data (&ftdic, data, n) != n) {
 		fprintf (stderr, "ftdi_write_data buffer error\n");
+		exit (1);
+	}
+}
+
+void
+spi_xfer (uint8_t *xbuf, uint8_t *rbuf, int n)
+{
+	int count_arg = n - 1;
+
+	send_byte (0x31);
+	send_byte (count_arg);
+	send_byte (count_arg >> 8);
+
+	if (ftdi_write_data (&ftdic, xbuf, n) != n) {
+		fprintf (stderr, "spi_xfer write error\n");
+		exit (1);
+	}
+
+	if (ftdi_read_data (&ftdic, rbuf, n) != n) {
+		fprintf (stderr, "spi_xfer read error\n");
 		exit (1);
 	}
 }
@@ -54,23 +74,31 @@ icestick_spi_init (void)
 		exit (1);
 	}
 
+	if (ftdi_setflowctrl(&ftdic, SIO_DISABLE_FLOW_CTRL) < 0) {
+		fprintf (stderr, "ftdi_setflowctrl error\n");
+		exit (1);
+	}
+
+
 	if (ftdi_set_bitmode (&ftdic, 0xff, BITMODE_MPSSE) < 0) {
 		fprintf (stderr, "ftdi_set_bitmode error\n");
 		exit(1);
 	}
 
-	// enable clock divide by 5
-	send_byte (0x8b);
+	double bit_rate = 2e6;
+	double reference_clock = 60e6;
+	int divisor = (reference_clock / 2 / bit_rate) - 1;
 
-	// set 6 MHz clock
-	send_byte (0x86);
-	send_byte (0x02);   // 1 or 2 MHz ?
-	send_byte (0x00);
+	send_byte (0x8a); // disable divide by 5
 
-	// configure output bits
+	send_byte (0x86); // set divisor
+	send_byte (divisor);
+	send_byte (divisor >> 8);
+
+	// bits 3..0 are: CK MOSI MISO SSEL
 	send_byte (0x80);
-	send_byte (0x01);
-	send_byte (0x0B);
+	send_byte (0x00);  // CK=0 MOSI=0 SSEL=0
+	send_byte (0x0b); // CK MOSI SSEL are outputs
 }
 
 void
@@ -101,7 +129,14 @@ main(int argc, char **argv)
 
 	icestick_spi_init ();
 
-	send_spi(&val, 1);
+	if (0) {
+		send_spi (&val, 1);
+	} else {
+		uint8_t rbuf[100];
+		rbuf[0] = 0x55;
+		spi_xfer (&val, rbuf, 1);
+		printf ("%x\n", rbuf[0]);
+	}
 
 	return 0;
 }
