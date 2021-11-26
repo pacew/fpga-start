@@ -1,14 +1,14 @@
-VLIBDIR=../lib
+MODULES_DIR=../modules
 
 VFILES = qdecode.v pll.v \
-	$(VLIBDIR)/quadrature_decode.v
+	$(MODULES_DIR)/quadrature_decode.v
 
 FREQ_MHZ = 100
 
 all: design.bin
 
-pll.v: $(VLIBDIR)/mkclock.py
-	python $(VLIBDIR)/mkclock.py $(FREQ_MHZ)
+pll.v: $(MODULES_DIR)/mkclock.py
+	python $(MODULES_DIR)/mkclock.py $(FREQ_MHZ)
 
 design.bin: $(VFILES) pins.pcf
 	yosys -DICE_STICK -q -p "synth_ice40 -json TMP.json" $(VFILES)
