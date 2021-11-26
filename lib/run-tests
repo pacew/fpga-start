@@ -1,6 +1,14 @@
 #! /bin/bash
 
-MODULES=quadrature_decode
+MODULES='
+       quadrature_decode
+       spi_slave
+'
+
+if [ $# = 1 ]
+then
+    MODULES=$1
+fi
 
 for mod in $MODULES
 do
