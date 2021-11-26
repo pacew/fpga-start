@@ -3,9 +3,9 @@
 `include "spi_slave.v"
 
 `define ASSERT(exp, message) \
-     begin if (!(exp)) begin \
+     begin if (!(exp) || (^(exp) === 1'bx)) begin \
 	UT_FAIL = UT_FAIL + 1; \
-		  $display("unit test error: ", message); end end
+		  $display("unit test error: ", message, " result=", exp); end end
 
 module test;
    integer UT_FAIL = 0;
@@ -19,8 +19,9 @@ module test;
 
    wire [7:0] cmd;
    wire       cmd_valid;
+   wire       MISO;
    
-   spi_slave uut(clk, SCK, SSEL, MOSI, cmd, cmd_valid);
+   spi_slave uut(clk, SCK, SSEL, MOSI, MISO, cmd, cmd_valid);
 
    initial begin
       $dumpfile("TMP.vcd");
@@ -43,16 +44,17 @@ module test;
       SSEL = 0; SCK = 0; MOSI = 0; #10;
       SSEL = 0; SCK = 1; MOSI = 1; #10; // bit 1
       SSEL = 0; SCK = 0; MOSI = 1; #10;
-
+      
       SSEL = 0; SCK = 1; MOSI = 0; // bit 0
-      #30;
+      #20;
       `ASSERT(! cmd_valid, "cmd shouldn't be valid yet");
       #10;
       `ASSERT(cmd_valid, "cmd should be valid");
       `ASSERT(cmd == 8'hea, "unexpected cmd value");
+      #10;
+      `ASSERT(! cmd_valid, "cmd should be only be valid for one cycle");
 
       SSEL = 0; SCK = 0; MOSI = 0; #10;
-
       SSEL = 0; SCK = 1; MOSI = 0; #10; // bit 7
       SSEL = 0; SCK = 0; MOSI = 0; #10;
       SSEL = 0; SCK = 1; MOSI = 0; #10; // bit 6
@@ -67,13 +69,14 @@ module test;
       SSEL = 0; SCK = 0; MOSI = 0; #10;
       SSEL = 0; SCK = 1; MOSI = 0; #10; // bit 1
       SSEL = 0; SCK = 0; MOSI = 0; #10;
-      SSEL = 0; SCK = 1; MOSI = 0; // bit 0
-
-      #30;
-      `ASSERT(cmd == 8'hea, "cmd changed too early");
+      SSEL = 0; SCK = 1; MOSI = 1; // bit 0
+      #20;
+      `ASSERT(! cmd_valid, "cmd should not be valid 2a");
       #10;
-      `ASSERT(cmd_valid, "cmd should be valid");
-      `ASSERT(cmd == 8'h00, "bad final cmd value");
+      `ASSERT(cmd_valid, "cmd should be valid 2");
+      `ASSERT(cmd == 8'h1, "bad final cmd value 2");
+      #10;
+      `ASSERT(! cmd_valid, "cmd should not be valid 2");
 
       if (UT_FAIL) begin
 	 $display("error: ", UT_FAIL, " unit tests failed");

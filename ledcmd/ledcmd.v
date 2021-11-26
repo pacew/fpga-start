@@ -7,7 +7,8 @@ module top (
 	    output LED5,
 	    input  spi_ssel,
 	    input  spi_sck,
-	    input  spi_mosi
+	    input  spi_mosi,
+	    output spi_miso
 	    );
 
    wire 	   clk;
@@ -28,13 +29,21 @@ module top (
       .SCK(spi_sck),
       .SSEL(spi_ssel),
       .MOSI(spi_mosi),
+      .MISO(spi_miso),
       .cmd(spi_cmd),
       .cmd_valid(spi_cmd_valid)
       );
    
-   assign LED1 = spi_cmd & 1;
-   assign LED2 = spi_cmd & 2 ? 1 : 0;
-   assign LED3 = spi_cmd & 4 ? 1 : 0;
-   assign LED4 = spi_cmd & 8 ? 1 : 0;
+   reg [7:0] 		    last_cmd;
+
+   always @(posedge clk)
+     if (spi_cmd_valid)
+       last_cmd <= spi_cmd;
+
+   assign LED1 = last_cmd & 1;
+   assign LED2 = last_cmd & 2 ? 1 : 0;
+   assign LED3 = last_cmd & 4 ? 1 : 0;
+   assign LED4 = spi_cmd_valid;
+   
    
 endmodule		 
