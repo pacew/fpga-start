@@ -53,7 +53,7 @@ module top (
    assign LED1 = last_cmd & 1;
    assign LED2 = last_cmd & 2 ? 1 : 0;
    assign LED3 = last_cmd & 4 ? 1 : 0;
-   assign LED4 = spi_cmd_valid;
+   assign LED4 = last_cmd & 8 ? 1 : 0;
    
    
 endmodule		 
