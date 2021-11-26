@@ -9,11 +9,9 @@
 
 module test;
    integer UT_FAIL = 0;
-   
 
    reg 	   clk = 1;
    always #5 clk = !clk;
-   
    
    reg A = 1'bx, B = 1'bx;
    
@@ -57,14 +55,12 @@ module test;
      #40;
      `ASSERT(count == 4, "counted to back to 4");
 
-
      if (UT_FAIL) begin
 	$display("error: ", UT_FAIL, " unit tests failed");
 	$fatal;
      end else begin
 	$display("unit tests: success");
      end
-     
      $finish;
      
      

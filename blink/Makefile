@@ -1,10 +1,8 @@
-VFILES = encoder.v pll.v quadrature_decode.v
+VFILES = blink.v pll.v
 
 FREQ_MHZ = 100
 
 all: design.bin
-
-test: quadrature_decode.vcd
 
 pll.v: mkclock.py
 	python mkclock.py $(FREQ_MHZ)
@@ -21,10 +19,8 @@ design.bin: $(VFILES) pins.pcf
 upload: design.bin
 	iceprog design.bin
 
-# view vcd files with gtkwave
-quadrature_decode.vcd: quadrature_decode_tb.v quadrature_decode.v
-	iverilog -s test -o TMP.tb quadrature_decode_tb.v
-	./TMP.tb
-
 clean:
 	rm -f *~ TMP.*
+
+
+
