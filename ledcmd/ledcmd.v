@@ -23,6 +23,9 @@ module top (
    wire [7:0] 		    spi_cmd;
    wire 		    spi_cmd_valid;
    
+   reg [7:0] 		    response;
+   
+
    spi_slave spi
      (
       .clk(clk),
@@ -31,14 +34,21 @@ module top (
       .MOSI(spi_mosi),
       .MISO(spi_miso),
       .cmd(spi_cmd),
-      .cmd_valid(spi_cmd_valid)
+      .cmd_valid(spi_cmd_valid),
+      .response(response)
       );
    
    reg [7:0] 		    last_cmd;
 
-   always @(posedge clk)
-     if (spi_cmd_valid)
-       last_cmd <= spi_cmd;
+   always @(posedge clk) begin
+     response <= 8'ha7;
+   
+     if (spi_cmd_valid) begin
+	last_cmd <= spi_cmd;
+
+	
+     end
+   end
 
    assign LED1 = last_cmd & 1;
    assign LED2 = last_cmd & 2 ? 1 : 0;

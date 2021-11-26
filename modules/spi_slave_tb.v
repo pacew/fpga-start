@@ -16,12 +16,14 @@ module test;
    reg 	   SCK = 0;
    reg 	   SSEL = 0;
    reg 	   MOSI = 0;
+   reg [7:0] response = 0;
+   
 
    wire [7:0] cmd;
    wire       cmd_valid;
    wire       MISO;
    
-   spi_slave uut(clk, SCK, SSEL, MOSI, MISO, cmd, cmd_valid);
+   spi_slave uut(clk, SCK, SSEL, MOSI, MISO, cmd, cmd_valid, response);
 
    initial begin
       $dumpfile("TMP.vcd");

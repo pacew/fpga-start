@@ -2,20 +2,21 @@
 
 module spi_slave
   (
-   input 	clk,
-   input 	SCK,
-   input 	SSEL,
-   input 	MOSI,
-   output reg	MISO,
+   input 	    clk,
+   input 	    SCK,
+   input 	    SSEL,
+   input 	    MOSI,
+   output reg 	    MISO,
    output reg [7:0] cmd,
-   output reg 	cmd_valid
+   output reg 	    cmd_valid,
+   input [7:0] 	    response
    );
 
    initial cmd_valid = 0; // initialize for test bench 
 
    // clk domain crossing
    reg [2:0] 	SCKr; always @(posedge clk) SCKr <= (SCKr << 1) | SCK;
-   wire 	SCK_risingedge = (SCKr[2:1]==2'b01);
+   wire 	SCK_risingedge = (SCKr[2:1] == 2'b01);
 
    reg [2:0] 	SSELr; always @(posedge clk) SSELr <= (SSELr << 1) | SSEL;
    wire 	SSEL_active = ~SSELr[1];  // SSEL is active low
@@ -34,7 +35,7 @@ module spi_slave
 
       if (~SSEL_active) begin
 	 bitcnt <= 0;
-	 xbuf <= 8'h3;
+	 xbuf <= response;
       end else begin
 	 if (SCK_risingedge) begin
 	    bitcnt <= bitcnt + 1;
@@ -44,8 +45,14 @@ module spi_slave
 	       cmd <= (rbuf << 1) | MOSI_data;
 	       cmd_valid <= 1;
 	    end
+
+	    xbuf <= xbuf << 1;
+	    
+	    
 	 end
       end
+
+      MISO <= xbuf & 8'h80 ? 1 : 0;
    end
 
 endmodule
