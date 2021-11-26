@@ -1,0 +1,12 @@
+./icestick_spi 1
+sleep 0.01
+./icestick_spi 0
+sleep 0.01
+./icestick_spi 3
+sleep 0.01
+./icestick_spi 0
+sleep 0.01
+./icestick_spi 7
+sleep 0.01
+./icestick_spi 0
+sleep 0.01

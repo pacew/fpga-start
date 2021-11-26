@@ -3,3 +3,4 @@
 TMP.*
 *.o
 icestick_spi
+design.bin
