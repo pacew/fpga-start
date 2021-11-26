@@ -33,8 +33,8 @@ module top (
       );
    
    assign LED1 = spi_cmd & 1;
-   assign LED2 = 0;
-   assign LED3 = 0;
-   assign LED4 = 0;
+   assign LED2 = spi_cmd & 2 ? 1 : 0;
+   assign LED3 = spi_cmd & 4 ? 1 : 0;
+   assign LED4 = spi_cmd & 8 ? 1 : 0;
    
 endmodule		 

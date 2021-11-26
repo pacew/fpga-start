@@ -94,7 +94,7 @@ main(int argc, char **argv)
 	}
 
 	if (optind < argc)
-		val = atoi (argv[optind++]);
+		val = strtol (argv[optind++], NULL, 0);
 
 	if (optind != argc)
 		usage ();
