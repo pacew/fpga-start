@@ -7,7 +7,7 @@ set_io LED5 95
 set_io OSCI  21
 
 # SPI signals:       ftdi pin
-set_io spi_ssel 4  # BDBUS3 (41)
-set_io spi_miso 7  # BDBUS2 (40)
-set_io spi_mosi 8  # BDBUS1 (39)
-set_io spi_sck  9  # BDBUS0 (38)
+set_io spi_ssel 4  # BDBUS3 (41) out D0 TMS/CS   CTSn          PIO3_05/DP01B
+set_io spi_miso 7  # BDBUS2 (40) in  D1 TDO/DI   RTSn          PIO3_06/DP02A
+set_io spi_mosi 8  # BDBUS1 (39) out D2 TDI/DO   RS232_Tx_TTL  PIO3_07/DP02B
+set_io spi_sck  9  # BDBUS0 (38) out D3 TCK/SK   RS232_Rx_TTL  PIO3_08/DP03A
