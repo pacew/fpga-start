@@ -1,0 +1,13 @@
+set_io LED1 99
+set_io LED2 98
+set_io LED3 97
+set_io LED4 96
+set_io LED5 95
+
+set_io OSCI  21
+
+# SPI signals:       ftdi pin
+set_io spi_ssel 4  # BDBUS3 (41)
+set_io spi_miso 7  # BDBUS2 (40)
+set_io spi_mosi 8  # BDBUS1 (39)
+set_io spi_sck  9  # BDBUS0 (38)

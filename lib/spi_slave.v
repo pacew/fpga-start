@@ -1,6 +1,6 @@
 // based on https://www.fpga4fun.com/SPI1.html
 
-module SPI_slave
+module spi_slave
   (
    input 	clk,
    input 	SCK,

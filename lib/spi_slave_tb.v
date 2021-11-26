@@ -20,7 +20,7 @@ module test;
    wire [7:0] cmd;
    wire       cmd_valid;
    
-   SPI_slave uut(clk, SCK, SSEL, MOSI, cmd, cmd_valid);
+   spi_slave uut(clk, SCK, SSEL, MOSI, cmd, cmd_valid);
 
    initial begin
       $dumpfile("TMP.vcd");
