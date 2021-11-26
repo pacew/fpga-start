@@ -60,9 +60,11 @@ module test;
 
      if (UT_FAIL) begin
 	$display("error: ", UT_FAIL, " unit tests failed");
+	$fatal;
      end else begin
 	$display("unit tests: success");
      end
+     
      $finish;
      
      
