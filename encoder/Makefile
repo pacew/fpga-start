@@ -2,7 +2,7 @@ VFILES = encoder.v pll.v quadrature_decode.v
 
 FREQ_MHZ = 100
 
-all: out.bin
+all: out.bin sim
 
 pll.v: Makefile mkclock.py
 	python mkclock.py $(FREQ_MHZ)
@@ -24,6 +24,13 @@ out.bin: out.asc
 
 prog: out.bin
 	iceprog out.bin
+
+sim: quadrature_decode_tb.v quadrature_decode.v
+	iverilog -s test -o sim quadrature_decode_tb.v
+	./sim
+
+wave:
+	gtkwave sim.vcd
 
 clean:
 	rm -f *~ out.json out.asc out.timings out.bin
